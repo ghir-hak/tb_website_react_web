@@ -38,7 +38,7 @@ function App() {
       } else {
         // Backend returned path, construct full URL
         const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-        wsUrl = `${protocol}//${window.location.host}${wsPath}`;
+        wsUrl = `${protocol}//${window.location.host}/${wsPath}`;
       }
 
       console.log("Connecting to WebSocket:", wsUrl);
