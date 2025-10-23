@@ -28,8 +28,20 @@ function App() {
       const response = await fetch("/api/getsocketurl?room=general");
       const wsPath = await response.text();
 
+      console.log("WebSocket path from backend:", wsPath);
+
       // Connect to WebSocket directly
-      const wsUrl = `wss://${window.location.host}${wsPath}`;
+      let wsUrl;
+      if (wsPath.startsWith("ws://") || wsPath.startsWith("wss://")) {
+        // Backend returned full URL
+        wsUrl = wsPath;
+      } else {
+        // Backend returned path, construct full URL
+        const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+        wsUrl = `${protocol}//${window.location.host}${wsPath}`;
+      }
+
+      console.log("Connecting to WebSocket:", wsUrl);
       const websocket = new WebSocket(wsUrl);
 
       websocket.onopen = () => {
@@ -53,7 +65,9 @@ function App() {
 
       websocket.onerror = (error) => {
         console.error("WebSocket error:", error);
+        console.error("Failed to connect to:", wsUrl);
         setIsConnected(false);
+        alert(`Failed to connect to chat. Check console for details.`);
       };
 
       setWs(websocket);
