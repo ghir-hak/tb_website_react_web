@@ -50,11 +50,50 @@ function App() {
       };
 
       websocket.onmessage = (event) => {
-        try {
-          const message = JSON.parse(event.data);
-          setMessages((prev) => [...prev, message]);
-        } catch (error) {
-          console.error("Error parsing message:", error);
+        console.log("Received WebSocket message type:", typeof event.data);
+        console.log("Received WebSocket message:", event.data);
+
+        // Handle blob data
+        if (event.data instanceof Blob) {
+          event.data.text().then((text) => {
+            console.log("Blob converted to text:", text);
+            try {
+              const message = JSON.parse(text);
+              console.log("Parsed message:", message);
+
+              // Only add messages that have the expected structure
+              if (message.username && message.message) {
+                setMessages((prev) => [...prev, message]);
+              } else {
+                console.log(
+                  "Skipping message - missing username or message:",
+                  message
+                );
+              }
+            } catch (error) {
+              console.error("Error parsing blob text:", error);
+              console.error("Raw blob text:", text);
+            }
+          });
+        } else {
+          // Handle text data
+          try {
+            const message = JSON.parse(event.data);
+            console.log("Parsed message:", message);
+
+            // Only add messages that have the expected structure
+            if (message.username && message.message) {
+              setMessages((prev) => [...prev, message]);
+            } else {
+              console.log(
+                "Skipping message - missing username or message:",
+                message
+              );
+            }
+          } catch (error) {
+            console.error("Error parsing message:", error);
+            console.error("Raw message data:", event.data);
+          }
         }
       };
 
