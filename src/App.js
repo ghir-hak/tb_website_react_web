@@ -149,7 +149,7 @@ function App() {
       <header className="App-header">
         <div className="chat-container">
           <div className="chat-header">
-            <h1>🚀 Taubyte Chat</h1>
+            <h1>🚀 Wowrack Chat</h1>
             <div className="connection-status">
               {isConnected ? (
                 <span className="status-connected">🟢 Connected</span>
